@@ -1,0 +1,19 @@
+services:
+  admission:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # 节点 CPU 总额(毫核), 首次建库时写入; 之后可用 PUT /node 调整
+      NODE_TOTAL_MILLICORES: "4000"
+      DB_PATH: /data/admission.db
+    volumes:
+      - admission-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  admission-data:
